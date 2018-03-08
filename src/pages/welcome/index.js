@@ -7,6 +7,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  ActivityIndicator
 } from 'react-native';
 
 import api from 'services/api';
@@ -26,6 +27,8 @@ export default class Welcome extends Component {
 
     state = {
       username: '',
+      loading: false,
+      errorMessage: null,
     };
 
     checkUserExists = async (username) => {
@@ -37,8 +40,9 @@ export default class Welcome extends Component {
     singIn = async () => {
       const { username } = this.state;
 
-      if (username.length === 0) return;
+      if (!username.length === 0) return;
 
+      this.setState({ loading: true });
       try {
         await this.checkUserExists(username);
 
@@ -50,7 +54,7 @@ export default class Welcome extends Component {
         });
         this.props.navigation.dispatch(resetAction);
       } catch (error) {
-
+        this.setState({ loading: false, errorMessage: 'Usuário não existe' });
       }
     }
     render() {
@@ -61,6 +65,8 @@ export default class Welcome extends Component {
           <Text style={styles.text}>
             Para continuar, é necessário que você informe seu usuário no GitHub
           </Text>
+
+          { !!this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text> }
 
           <View style={styles.form}>
             <TextInput
@@ -74,7 +80,11 @@ export default class Welcome extends Component {
             />
 
             <TouchableOpacity style={styles.button} onPress={this.singIn}>
-              <Text style={styles.buttonText}>Continuar</Text>
+              {this.state.loading ?
+                <ActivityIndicator size="small" color="#FFFFFF" />
+              :
+                <Text style={styles.buttonText}>Continuar</Text>
+              }
             </TouchableOpacity>
           </View>
         </View>
