@@ -8,9 +8,12 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
+
+import api from 'services/api';
+
 import styles from './styles';
 
-class Welcome extends Component {
+export default class Welcome extends Component {
     static navigationOptions = {
       header: null,
     };
@@ -21,14 +24,34 @@ class Welcome extends Component {
       }).isRequired,
     };
 
-    singIn = () => {
-      const resetAction = NavigationActions.reset({
-        index: 0,
-        actions: [
-          NavigationActions.navigate({ routeName: 'User' }),
-        ],
-      });
-      this.props.navigation.dispatch(resetAction);
+    state = {
+      username: '',
+    };
+
+    checkUserExists = async (username) => {
+      const user = await api.get(`/users/${username}`);
+
+      return user;
+    }
+
+    singIn = async () => {
+      const { username } = this.state;
+
+      if (username.length === 0) return;
+
+      try {
+        await this.checkUserExists(username);
+
+        const resetAction = NavigationActions.reset({
+          index: 0,
+          actions: [
+            NavigationActions.navigate({ routeName: 'User' }),
+          ],
+        });
+        this.props.navigation.dispatch(resetAction);
+      } catch (error) {
+
+      }
     }
     render() {
       return (
@@ -46,6 +69,8 @@ class Welcome extends Component {
               autoCorrect={false}
               placeholder="Digite seu usuário"
               underlineColorAndroid="transparent"
+              value={this.state.username}
+              onChangeText={ username => this.setState({ username })}
             />
 
             <TouchableOpacity style={styles.button} onPress={this.singIn}>
@@ -56,5 +81,3 @@ class Welcome extends Component {
       );
     }
 }
-
-export default Welcome;
