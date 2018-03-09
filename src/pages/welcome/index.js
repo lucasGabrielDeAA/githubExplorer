@@ -7,7 +7,8 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
+  AsyncStorage,
 } from 'react-native';
 
 import api from 'services/api';
@@ -31,6 +32,10 @@ export default class Welcome extends Component {
       errorMessage: null,
     };
 
+    saveUser = async (username) => {
+      await AsyncStorage.setItem('@Github:username', username);
+    }
+
     checkUserExists = async (username) => {
       const user = await api.get(`/users/${username}`);
 
@@ -45,6 +50,7 @@ export default class Welcome extends Component {
       this.setState({ loading: true });
       try {
         await this.checkUserExists(username);
+        await this.saveUser(username);
 
         const resetAction = NavigationActions.reset({
           index: 0,
