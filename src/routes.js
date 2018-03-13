@@ -26,6 +26,9 @@ const createNavigator = (isLogged = false) => StackNavigator({
         style: {
           backgroundColor: colors.secundary,
         },
+        indicatorStyle: {
+          backgroundColor: colors.white,
+        },
       },
     }),
   },
