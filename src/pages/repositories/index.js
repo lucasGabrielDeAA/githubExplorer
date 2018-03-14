@@ -38,9 +38,7 @@ class Repositories extends Component {
     });
   }
 
-  renderListItem = ({ item }) => (
-    <RepositoryItem repository={item} />
-  )
+  renderListItem = ({ item }) => <RepositoryItem repository={item} />
 
   renderList = () => (
     <FlatList
@@ -58,7 +56,7 @@ class Repositories extends Component {
           : this.renderList()
         }
       </View>
-    )
+    );
   }
 }
 
