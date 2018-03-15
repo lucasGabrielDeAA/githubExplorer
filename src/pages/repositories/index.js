@@ -4,13 +4,11 @@ import {
   AsyncStorage,
   ActivityIndicator,
   FlatList,
-  Text,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import RepositoryItem from './components/RepositoryItem';
 
 import api from 'services/api';
-
+import RepositoryItem from './components/RepositoryItem';
 import styles from './styles';
 
 class Repositories extends Component {
@@ -22,6 +20,7 @@ class Repositories extends Component {
   state = {
     data: [],
     loading: true,
+    refreshing: false,
   };
 
   componentDidMount() {
@@ -29,12 +28,14 @@ class Repositories extends Component {
   }
 
   loadRepositories = async () => {
+    this.setState({ refreshing: true });
     const username = await AsyncStorage.getItem('@Github:username');
     const response = await api.get(`/users/${username}/repos`);
 
     this.setState({
       data: response.data,
       loading: false,
+      refreshing: false,
     });
   }
 
@@ -45,6 +46,8 @@ class Repositories extends Component {
       data={this.state.data}
       keyExtractor={item => String(item.id)}
       renderItem={this.renderListItem}
+      onRefresh={this.loadRepositories}
+      refreshing={this.state.refreshing}
     />
   )
 

@@ -7,10 +7,8 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import OrganizationItem from './components/OrganizationItem';
-
 import api from 'services/api';
-
+import OrganizationItem from './components/OrganizationItem';
 import styles from './styles';
 
 class Organizations extends Component {
@@ -22,6 +20,7 @@ class Organizations extends Component {
   state = {
     data: [],
     loading: true,
+    refreshing: false,
   };
 
   componentDidMount() {
@@ -29,6 +28,7 @@ class Organizations extends Component {
   }
 
   loadOrganizations = async () => {
+    this.setState({ refreshing: true });
     const username = await AsyncStorage.getItem('@Github:username');
     const response = await api.get(`/users/${username}/orgs`);
 
@@ -37,6 +37,7 @@ class Organizations extends Component {
     this.setState({
       data: response.data,
       loading: false,
+      refreshing: false,
     });
   }
 
@@ -51,6 +52,8 @@ class Organizations extends Component {
       renderItem={this.renderListItem}
       numColumns={2}
       columnWrapperStyle={styles.columnContainer}
+      onRefresh={this.loadOrganizations}
+      refreshing={this.state.refreshing}
     />
   )
 
