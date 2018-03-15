@@ -3,10 +3,11 @@ import {
   View,
   AsyncStorage,
   ActivityIndicator,
-  Text,
   FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+
+import OrganizationItem from './components/OrganizationItem';
 
 import api from 'services/api';
 
@@ -39,16 +40,17 @@ class Organizations extends Component {
     });
   }
 
-  renderListItem = ({ item }) => {
-    console.tron.log(item);
-    return null;
-  }
+  renderListItem = ({ item }) => (
+    <OrganizationItem organization={item} />
+  );
 
   renderList = () => (
     <FlatList
       data={this.state.data}
       keyExtractor={item => String(item.id)}
       renderItem={this.renderListItem}
+      numColumns={2}
+      columnWrapperStyle={styles.columnContainer}
     />
   )
 
